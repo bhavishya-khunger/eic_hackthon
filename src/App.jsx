@@ -1,9 +1,10 @@
 import React from 'react'
+import StartupForm from './pages/StartupForm'
 
 const App = () => {
   return (
     <div className='bg-red-100'>
-      hello
+      <StartupForm/>
     </div>
   )
 }

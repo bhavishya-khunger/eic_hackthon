@@ -7,7 +7,7 @@ import {
   createUserWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 // Google Provider
 const googleProvider = new GoogleAuthProvider();
@@ -27,30 +27,6 @@ export const loginWithGoogle = async () => {
 };
 
 /**
- * Register with Google (Same as login, but can be used separately if needed)
- */
-export const registerWithGoogle = async () => {
-  try {
-    const result = await signInWithPopup(auth, googleProvider);
-    const user = result.user;
-
-    // Store additional user data in Firestore if needed
-    await setDoc(doc(db, "users", user.uid), {
-      name: user.displayName,
-      email: user.email,
-      industry: "Unknown",
-      createdAt: new Date(),
-    });
-
-    console.log("Google Registration Success:", user);
-    return user;
-  } catch (error) {
-    console.error("Google Registration Error:", error.message);
-    throw error;
-  }
-};
-
-/**
  * Manual Login (Email & Password)
  */
 export const login = async (email, password) => {
@@ -65,9 +41,9 @@ export const login = async (email, password) => {
 };
 
 /**
- * Manual Register (Email, Password, Full Name, Industry)
+ * Manual Register (Email, Password, Full Name, Age)
  */
-export const register = async (fullName, email, industry, password, confirmPassword) => {
+export const register = async (fullName, email, age, password, confirmPassword) => {
   if (password !== confirmPassword) {
     throw new Error("Passwords do not match!");
   }
@@ -84,7 +60,7 @@ export const register = async (fullName, email, industry, password, confirmPassw
     await setDoc(doc(db, "users", user.uid), {
       name: fullName,
       email,
-      industry,
+      age,
       createdAt: new Date(),
     });
 
@@ -94,4 +70,16 @@ export const register = async (fullName, email, industry, password, confirmPassw
     console.error("Registration Error:", error.message);
     throw error;
   }
+};
+
+export const getCurrentUser = async () => {
+  const user = auth.currentUser;
+  if (user) {
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+    if (userSnap.exists()) {
+      return { uid: user.uid, ...userSnap.data() };
+    }
+  }
+  return null;
 };

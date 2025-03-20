@@ -6,6 +6,8 @@ import ExpertFinder from "./pages/ExpertFinder";
 import LandingPage from "./pages/LandingPage";
 import SetupProfile from "./pages/SetUpProfile";
 import UpdateProfileForm from "./pages/SetUpProfile";
+import ChatScreen from "./pages/ChatScreen";
+import Layout from "./layouts/Layout";
 
 function App() {
   return (
@@ -14,9 +16,10 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/setup" element={<UpdateProfileForm />} />
         <Route path="/login" element={<LoginForm />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/expert" element={<ExpertFinder />} />
-        <Route path="*" element={<Profile />} />
+        <Route path="/chat" element={<Layout children={<ChatScreen />} />} />
+        <Route path="/connections" element={<Layout children={<Profile />} />} />
+        <Route path="/expert" element={<Layout children={<ExpertFinder />} />} />
+        <Route path="*" element={<Layout children={<Profile />} />} />
       </Routes>
     </Router>
   );

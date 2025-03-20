@@ -33,7 +33,7 @@ export default function LandingPage() {
     if (!user) {
       navigate("/login");
     } else {
-      navigate("/profile");
+      navigate("/connections");
     }
   }
 

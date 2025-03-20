@@ -8,12 +8,14 @@ import SetupProfile from "./pages/SetUpProfile";
 import UpdateProfileForm from "./pages/SetUpProfile";
 import ChatScreen from "./pages/ChatScreen";
 import Layout from "./layouts/Layout";
+import StartupForm from './pages/StartupForm'
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/suf" element={<StartupForm />} />
         <Route path="/setup" element={<UpdateProfileForm />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/chat" element={<Layout children={<ChatScreen />} />} />

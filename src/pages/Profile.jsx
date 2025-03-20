@@ -1,4 +1,4 @@
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import React, { useEffect, useState } from 'react';
 import { auth } from '../firebaseConfig';
 import { getCurrentUser } from '../backend/backend';
@@ -54,13 +54,13 @@ const Profile = () => {
     }
 
     if (!user) {
-        navigate("/login");
+        navigate("/");
         return null; // Prevents rendering further
     }
 
 
     if (!user) {
-        navigate("/login");
+        navigate("/");
         return;
     }
 

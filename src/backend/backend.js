@@ -83,3 +83,19 @@ export const getCurrentUser = async () => {
   }
   return null;
 };
+
+export const updateUserProfile = async (profession, tagline, linkedin, areasOfInterest) => {
+  const user = auth.currentUser;
+  if (user) {
+    try {
+      await updateProfile(user, {
+        profession, tagline, linkedin, areasOfInterest
+      });
+      console.log("Profile updated successfully!");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
+  } else {
+    console.log("No user is signed in.");
+  }
+};

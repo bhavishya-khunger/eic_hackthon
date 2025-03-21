@@ -7,7 +7,7 @@ import {
   createUserWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { arrayRemove, arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 
 // Google Provider
 const googleProvider = new GoogleAuthProvider();
@@ -97,5 +97,57 @@ export const updateUserProfile = async (profession, tagline, linkedin, areasOfIn
     }
   } else {
     console.log("No user is signed in.");
+  }
+};
+
+export const sendConnectionRequest = async (senderId, receiverId) => {
+  try {
+      const receiverRef = doc(db, "users", receiverId);
+      await updateDoc(receiverRef, {
+          pendingRequests: arrayUnion(senderId) // Add sender to pending requests
+      });
+      console.log("Connection request sent!");
+  } catch (error) {
+      console.error("Error sending request:", error);
+  }
+};
+
+export const approveConnection = async (approverId, senderId) => {
+  try {
+      const approverRef = doc(db, "users", approverId);
+      const senderRef = doc(db, "users", senderId);
+
+      // Remove senderId from pendingRequests and add to connections
+      await updateDoc(approverRef, {
+          pendingRequests: arrayRemove(senderId),
+          connections: arrayUnion(senderId)
+      });
+
+      // Add approverId to senderId's connections
+      await updateDoc(senderRef, {
+          connections: arrayUnion(approverId)
+      });
+
+      console.log("Connection approved!");
+  } catch (error) {
+      console.error("Error approving request:", error);
+  }
+};
+
+export const findUserFromUID = async (uid) => {
+  if (!uid) return null; // Ensure UID is provided
+
+  try {
+      const userRef = doc(db, "users", uid); // Reference to the user's document
+      const userSnap = await getDoc(userRef); // Fetch the document
+
+      if (userSnap.exists()) {
+          return userSnap.data(); // Return user data if found
+      } else {
+          return null; // User not found
+      }
+  } catch (error) {
+      console.error("Error fetching user:", error);
+      return null;
   }
 };

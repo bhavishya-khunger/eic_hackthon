@@ -8,9 +8,34 @@ import SetupProfile from "./pages/SetUpProfile";
 import UpdateProfileForm from "./pages/SetUpProfile";
 import ChatScreen from "./pages/ChatScreen";
 import Layout from "./layouts/Layout";
-import StartupForm from './pages/StartupForm'
+import StartupForm from './pages/StartupForm';
+import { onAuthStateChanged } from 'firebase/auth';
+import { useEffect, useState } from 'react';
+import { auth } from './firebaseConfig';
+import { findUserFromUID, getCurrentUser } from './backend/backend';
+import { useNavigate } from 'react-router-dom';
+import ConnectionsList from './components/ConnectionList';
 
 function App() {
+  const [user, setUser] = useState();
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        try {
+          const loggedUser = await getCurrentUser();
+          console.log("loggedUser: ", loggedUser);
+          setUser(loggedUser);
+        } catch (error) {
+          console.error("Error fetching user:", error);
+        }
+      } else {
+        setUser(null);
+      }
+      // setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
   return (
     <Router>
       <Routes>
